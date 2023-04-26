@@ -3,12 +3,29 @@ import pandas as pd
 import requests
 from io import BytesIO
 
-github_url = 'https://raw.githubusercontent.com/tomzcn123/Stock_H/main/H.xlsx'
-response = requests.get(github_url)
-excel_data = BytesIO(response.content)
-sheet_name = 'Sheet'
-data = pd.read_excel(excel_data, sheet_name=sheet_name, engine='openpyxl')
-tickers = data[['tickers', 'sector','name']].to_dict('records')
+def Stock_H():
+    github_url = 'https://raw.githubusercontent.com/tomzcn123/Stock_H/main/H.xlsx'
+    response = requests.get(github_url)
+    excel_data = BytesIO(response.content)
+    sheet_name = 'Sheet'
+    data = pd.read_excel(excel_data, sheet_name=sheet_name, engine='openpyxl')
+    tickers = table[['Symbol', 'GICS Sector', 'Security']].to_dict('records')
+    return tickers
+
+def Stock_A():
+    github_url = 'https://raw.githubusercontent.com/tomzcn123/Stock_H/main/A.xlsx'
+    response = requests.get(github_url)
+    excel_data = BytesIO(response.content)
+    sheet_name = 'Sheet'
+    data = pd.read_excel(excel_data, sheet_name=sheet_name, engine='openpyxl')
+    tickers = table[['Symbol', 'GICS Sector', 'Security']].to_dict('records')
+    return tickers
+
+def get_sp500_tickers():
+    url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
+    table = pd.read_html(url, header=0)[0]
+    tickers = table[['Symbol', 'GICS Sector', 'Security']].to_dict('records')
+    return tickers
 
 
 import yfinance as yf
@@ -43,9 +60,9 @@ def find_stocks_above_conditions(stock_list):
     stocks_above_conditions = defaultdict(list)
     error_messages = []
     for stock_info in stock_list:
-        stock = stock_info['tickers']
-        sector = stock_info['sector']
-        name = stock_info['name']
+        stock = stock_info['Symbol']
+        sector = stock_info['GICS Sector']
+        name = stock_info['Security']
         try:
             data = fetch_stock_data(stock)
             data = calculate_moving_average(data)
@@ -60,6 +77,7 @@ def find_stocks_above_conditions(stock_list):
             error_messages.append(f"Error processing stock {stock}: {e}")
 
     return stocks_above_conditions, error_messages
+
 
 
 
@@ -92,15 +110,52 @@ def plot_candlestick_chart(stock_ticker, period='3mo', interval='1d'):
     return fig
 
 st.title("Stock Opportunity")
-st.write("Analyzing stocks...")
-stocks_above_conditions, errors = find_stocks_above_conditions(tickers)
-for error in errors:
-    st.warning(error)  # Display the error messages outside the cached function
+st.write("Select the Market to Start..")
+options= ["China Main","China H","SP500"]
+selected_option = st.sidebar.selectbox("Choose an Market", options)
 
-st.header("Stocks with the current price above the 20-day moving average and 5-day MACD line:")
-for sector, stocks in stocks_above_conditions.items():
-    st.subheader(sector)
-    selected_stock = st.selectbox(f"Select a stock from {sector}", stocks, format_func=lambda x: f"{x[1]} ({x[0]})")
-    st.write(f"Selected stock: {selected_stock[1]} ({selected_stock[0]})")
-    candlestick_chart = plot_candlestick_chart(selected_stock[0])
-    st.plotly_chart(candlestick_chart)
+if selected_option == "China Main":
+    tickers = Stock_A()
+    st.write("Analyzing stocks...")
+    stocks_above_conditions, errors = find_stocks_above_conditions(tickers)
+    for error in errors:
+        st.warning(error)  # Display the error messages outside the cached function
+    st.header("Stocks with the current price above the 20-day moving average and 5-day MACD line:")
+    for sector, stocks in stocks_above_conditions.items():
+        st.subheader(sector)
+        selected_stock = st.selectbox(f"Select a stock from {sector}", stocks, format_func=lambda x: f"{x[1]} ({x[0]})")
+        st.write(f"Selected stock: {selected_stock[1]} ({selected_stock[0]})")
+        candlestick_chart = plot_candlestick_chart(selected_stock[0])
+        st.plotly_chart(candlestick_chart)
+        
+elif selected_option == "China H":
+    tickers = Stock_H()
+    st.write("Analyzing stocks...")
+    stocks_above_conditions, errors = find_stocks_above_conditions(tickers)
+    for error in errors:
+        st.warning(error)  # Display the error messages outside the cached function
+    st.header("Stocks with the current price above the 20-day moving average and 5-day MACD line:")
+    for sector, stocks in stocks_above_conditions.items():
+        st.subheader(sector)
+        selected_stock = st.selectbox(f"Select a stock from {sector}", stocks, format_func=lambda x: f"{x[1]} ({x[0]})")
+        st.write(f"Selected stock: {selected_stock[1]} ({selected_stock[0]})")
+        candlestick_chart = plot_candlestick_chart(selected_stock[0])
+        st.plotly_chart(candlestick_chart)
+        
+        
+elif selected_option == "SP500":
+    sp500_tickers = get_sp500_tickers()
+    st.write("Analyzing stocks...")
+    stocks_above_conditions, errors = find_stocks_above_conditions(sp500_tickers)
+    for error in errors:
+        st.warning(error)  # Display the error messages outside the cached function
+    st.header("Stocks with the current price above the 20-day moving average and 5-day MACD line:")
+    for sector, stocks in stocks_above_conditions.items():
+        st.subheader(sector)
+        selected_stock = st.selectbox(f"Select a stock from {sector}", stocks, format_func=lambda x: f"{x[1]} ({x[0]})")
+        st.write(f"Selected stock: {selected_stock[1]} ({selected_stock[0]})")
+        candlestick_chart = plot_candlestick_chart(selected_stock[0])
+        st.plotly_chart(candlestick_chart)
+    
+    
+    
