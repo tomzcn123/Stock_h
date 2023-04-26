@@ -9,7 +9,7 @@ def Stock_H():
     excel_data = BytesIO(response.content)
     sheet_name = 'Sheet'
     data = pd.read_excel(excel_data, sheet_name=sheet_name, engine='openpyxl')
-    tickers = table[['Symbol', 'GICS Sector', 'Security']].to_dict('records')
+    tickers = data[['Symbol', 'GICS Sector', 'Security']].to_dict('records')
     return tickers
 
 def Stock_A():
@@ -18,8 +18,9 @@ def Stock_A():
     excel_data = BytesIO(response.content)
     sheet_name = 'Sheet'
     data = pd.read_excel(excel_data, sheet_name=sheet_name, engine='openpyxl')
-    tickers = table[['Symbol', 'GICS Sector', 'Security']].to_dict('records')
+    tickers = data[['Symbol', 'GICS Sector', 'Security']].to_dict('records')
     return tickers
+
 
 def get_sp500_tickers():
     url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
