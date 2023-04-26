@@ -3,7 +3,7 @@ import pandas as pd
 import requests
 from io import BytesIO
 
-github_url = 'https://raw.githubusercontent.com/tomzcn123/china_stock/main/A.xlsx'
+github_url = 'https://raw.githubusercontent.com/tomzcn123/Stock_H/main/H.xlsx'
 response = requests.get(github_url)
 excel_data = BytesIO(response.content)
 sheet_name = 'Sheet'
