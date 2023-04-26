@@ -112,7 +112,7 @@ def plot_candlestick_chart(stock_ticker, period='3mo', interval='1d'):
 st.title("Stock Opportunity")
 st.write("Select the Market to Start..")
 options= ["China Main","China H","SP500"]
-selected_option = st.sidebar.selectbox("Choose an Market", options)
+selected_option = st.selectbox("Choose an Market", options)
 
 if selected_option == "China Main":
     A_tickers = Stock_A()
