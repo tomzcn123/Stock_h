@@ -115,9 +115,9 @@ options= ["China Main","China H","SP500"]
 selected_option = st.sidebar.selectbox("Choose an Market", options)
 
 if selected_option == "China Main":
-    tickers = Stock_A()
+    A_tickers = Stock_A()
     st.write("Analyzing stocks...")
-    stocks_above_conditions, errors = find_stocks_above_conditions(tickers)
+    stocks_above_conditions, errors = find_stocks_above_conditions(A_tickers)
     for error in errors:
         st.warning(error)  # Display the error messages outside the cached function
     st.header("Stocks with the current price above the 20-day moving average and 5-day MACD line:")
@@ -129,9 +129,9 @@ if selected_option == "China Main":
         st.plotly_chart(candlestick_chart)
         
 elif selected_option == "China H":
-    tickers = Stock_H()
+    H_tickers = Stock_H()
     st.write("Analyzing stocks...")
-    stocks_above_conditions, errors = find_stocks_above_conditions(tickers)
+    stocks_above_conditions, errors = find_stocks_above_conditions(H_tickers)
     for error in errors:
         st.warning(error)  # Display the error messages outside the cached function
     st.header("Stocks with the current price above the 20-day moving average and 5-day MACD line:")
